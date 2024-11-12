@@ -52,18 +52,16 @@ with tf.Session(config=config) as sess:
         print(ckpt)
         load(loader, sess, ckpt)
         print("============")
-        length = 1106
+        length = len(os.listdir(os.path.join(test_folder, 'input1')))
         psnr_list = []
         ssim_list = []
 
         for i in range(0, length):
             #load test data
             input_clip = np.expand_dims(data_loader.get_data_clips(i, 128, 128), axis=0)
-            print('000')
             
             # inference
             _, _, _, _, _, warp, _, _, warp_one = sess.run([test_net1_f, test_net2_f, test_net3_f, test_warp2_H1, test_warp2_H2, test_warp2_H3, test_one_warp_H1, test_one_warp_H2, test_one_warp_H3], feed_dict={test_inputs: input_clip})
-            print('111')
             
             warp = (warp+1) * 127.5    
             warp = warp[0] 
@@ -76,14 +74,12 @@ with tf.Session(config=config) as sess:
             # compute psnr/ssim
             psnr = skimage.measure.compare_psnr(input1*warp_one, warp*warp_one, 255)
             ssim = skimage.measure.compare_ssim(input1*warp_one, warp*warp_one, data_range=255, multichannel=True)
-            print('222')
 
             
             print('i = {} / {}, psnr = {:.6f}, ssim = {:.6f}'.format(i+1, length, psnr, ssim))
             
             psnr_list.append(psnr)
             ssim_list.append(ssim)
-            print('------------------------------------')
             
             
         print("===================Results Analysis==================")

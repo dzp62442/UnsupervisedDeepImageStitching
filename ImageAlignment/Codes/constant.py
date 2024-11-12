@@ -2,10 +2,10 @@
 TRAIN_FOLDER = '/data/cylin/nl/Data/UDIS-D/training'
 
 #testing dataset path
-TEST_FOLDER = '/data/cylin/nl/Data/UDIS-D/testing'
+TEST_FOLDER = '/home/dzp62442/Projects/UnsupervisedDeepImageStitching/Datasets/WhiteCar-spa/testing'
 
 #GPU index
-GPU = '1'
+GPU = '0'
 
 #batch size for training
 TRAIN_BATCH_SIZE = 4
