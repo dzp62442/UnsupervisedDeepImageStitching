@@ -23,6 +23,8 @@ You can try the testing set of the proposed dataset with your own algorithm. And
 * numpy 1.18.1
 * tensorflow 1.13.1
 * tensorlayer 1.8.0
+* opencv-python-headless~=4.5.1.48
+* scikit-image==0.15.0
 
 #### How to run it
 Due to the memory limitation of our GPU, we implement this unsupervised solution in two stages:

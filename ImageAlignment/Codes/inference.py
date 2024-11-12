@@ -59,10 +59,11 @@ with tf.Session(config=config) as sess:
         for i in range(0, length):
             #load test data
             input_clip = np.expand_dims(data_loader.get_data_clips(i, 128, 128), axis=0)
+            print('000')
             
             # inference
             _, _, _, _, _, warp, _, _, warp_one = sess.run([test_net1_f, test_net2_f, test_net3_f, test_warp2_H1, test_warp2_H2, test_warp2_H3, test_one_warp_H1, test_one_warp_H2, test_one_warp_H3], feed_dict={test_inputs: input_clip})
-            
+            print('111')
             
             warp = (warp+1) * 127.5    
             warp = warp[0] 
@@ -75,32 +76,38 @@ with tf.Session(config=config) as sess:
             # compute psnr/ssim
             psnr = skimage.measure.compare_psnr(input1*warp_one, warp*warp_one, 255)
             ssim = skimage.measure.compare_ssim(input1*warp_one, warp*warp_one, data_range=255, multichannel=True)
+            print('222')
 
             
-            print('i = {} / {}, psnr = {:.6f}'.format( i+1, length, psnr))
+            print('i = {} / {}, psnr = {:.6f}, ssim = {:.6f}'.format(i+1, length, psnr, ssim))
             
             psnr_list.append(psnr)
             ssim_list.append(ssim)
+            print('------------------------------------')
             
             
-        print("===================Results Analysis==================")   
+        print("===================Results Analysis==================")
+        thirty_percent_index = int(length * 0.3)
+        sixty_percent_index = int(length * 0.6)
+
         psnr_list.sort(reverse = True)
-        psnr_list_30 = psnr_list[0 : 331]
-        psnr_list_60 = psnr_list[331: 663]
-        psnr_list_100 = psnr_list[663: -1]
-        print("top 30%", np.mean(psnr_list_30))
-        print("top 30~60%", np.mean(psnr_list_60))
-        print("top 60~100%", np.mean(psnr_list_100))
-        print('average psnr:', np.mean(psnr_list))
+        psnr_list_30 = psnr_list[0 : thirty_percent_index]
+        psnr_list_60 = psnr_list[thirty_percent_index: sixty_percent_index]
+        psnr_list_100 = psnr_list[sixty_percent_index: -1]
+        print("[psnr] top 30%: ", np.mean(psnr_list_30))
+        print("[psnr] top 30~60%: ", np.mean(psnr_list_60))
+        print("[psnr] top 60~100%: ", np.mean(psnr_list_100))
+        print('[psnr] average: {}'.format(np.mean(psnr_list)))
+
         
         ssim_list.sort(reverse = True)
-        ssim_list_30 = ssim_list[0 : 331]
-        ssim_list_60 = ssim_list[331: 663]
-        ssim_list_100 = ssim_list[663: -1]
-        print("top 30%", np.mean(ssim_list_30))
-        print("top 30~60%", np.mean(ssim_list_60))
-        print("top 60~100%", np.mean(ssim_list_100))
-        print('average ssim:', np.mean(ssim_list))
+        ssim_list_30 = ssim_list[0 : thirty_percent_index]
+        ssim_list_60 = ssim_list[thirty_percent_index: sixty_percent_index]
+        ssim_list_100 = ssim_list[sixty_percent_index: -1]
+        print("[ssim] top 30%: ", np.mean(ssim_list_30))
+        print("[ssim] top 30~60%: ", np.mean(ssim_list_60))
+        print("[ssim] top 60~100%: ", np.mean(ssim_list_100))
+        print('[ssim] average: {}'.format(np.mean(ssim_list)))
 
     inference_func(snapshot_dir)
     
